@@ -3,7 +3,7 @@ import { env } from "@/lib/env";
 
 const supabase = createClient(
   env.SUPABASE_URL,
-  env.SUPABASE_PUBLISHABLE_DEFAULT_KEY
+  env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 type UploadAudioOptions = {
@@ -12,7 +12,7 @@ type UploadAudioOptions = {
   contentType?: string;
 };
 
-// ✅ Upload
+// Upload
 export async function uploadAudio({
   buffer,
   key,
@@ -28,7 +28,7 @@ export async function uploadAudio({
   if (error) throw error;
 }
 
-// ✅ Delete
+// Delete
 export async function deleteAudio(key: string): Promise<void> {
   const { error } = await supabase.storage
     .from(env.SUPABASE_BUCKET)
@@ -37,7 +37,7 @@ export async function deleteAudio(key: string): Promise<void> {
   if (error) throw error;
 }
 
-// ✅ Signed URL (1 hour)
+// Signed URL (1 hour)
 export async function getSignedAudioUrl(key: string): Promise<string> {
   const { data, error } = await supabase.storage
     .from(env.SUPABASE_BUCKET)
