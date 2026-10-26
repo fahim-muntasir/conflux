@@ -3,16 +3,18 @@
 import { Coins } from "lucide-react";
 import { useStore } from "@tanstack/react-form";
 
+import { SettingsDrawer } from "./settings-drawer";
+import { HistoryDrawer } from "./history-drawer";
+import { VoiceSelectorButton } from "./voice-selector-button";
+
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useTypedAppFormContext } from "@/hooks/use-app-form";
 
-import {
-  COST_PER_UNIT,
-  TEXT_MAX_LENGTH
-} from "@/features/text-to-speech/data/constants";
+import { COST_PER_UNIT,TEXT_MAX_LENGTH } from "@/features/text-to-speech/data/constants";
 import { ttsFormOptions } from "./text-to-speech-form";
 import { GenerateButton } from "./generate-button";
+import { PromptSuggestions } from "./prompt-suggestions";
 
 export function TextInputPanel() {
   const form = useTypedAppFormContext(ttsFormOptions);
@@ -45,7 +47,10 @@ export function TextInputPanel() {
         {/* Mobile layout */}
         <div className="flex flex-col gap-3 lg:hidden">
           <div className="flex items-center gap-2">
-
+            <SettingsDrawer>
+              <VoiceSelectorButton />
+            </SettingsDrawer>
+            <HistoryDrawer />
           </div>
           <GenerateButton
             className="w-full"
@@ -84,7 +89,9 @@ export function TextInputPanel() {
           </div>
         ) : (
           <div className="hidden lg:block">
-            Prompt suggestions..
+            <PromptSuggestions
+              onSelect={(prompt) => form.setFieldValue("text", prompt)}
+            />
           </div>
         )}
       </div>
