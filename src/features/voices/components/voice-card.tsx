@@ -13,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,11 +23,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
 import { VoiceAvatar } from "@/components/voice-avatar/voice-avatar";
+import { WaveformBars } from "@/components/waveform-bars";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@/trpc/routers/_app";
 import { VOICE_CATEGORY_LABELS } from "@/features/voices/data/voice-categories";
 import { useAudioPlayback } from "@/hooks/use-audio-playback";
 import { useTRPC } from "@/trpc/client";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 export type VoiceItem =
@@ -75,61 +78,40 @@ export function VoiceCard({ voice }: VoiceCardProps) {
   );
 
   return (
-    <div className="flex items-center gap-1 overflow-hidden rounded-xl border pr-3 lg:pr-6">
-      <div className="relative h-24 w-20 shrink-0 lg:h-30 lg:w-24">
-        <div className="absolute left-0 top-0 h-24 w-10 border-r bg-muted/50 lg:h-30 lg:w-12" />
+    <div
+      className={cn(
+        "flex flex-col gap-4 rounded-lg border bg-card p-4 transition-colors hover:border-primary/30",
+        isPlaying && "border-primary/50",
+      )}
+    >
+      <div className="flex items-start gap-3">
+        <VoiceAvatar
+          seed={voice.id}
+          name={voice.name}
+          className="size-11"
+        />
 
-        <div className="absolute inset-0 flex items-center justify-center">
-          <VoiceAvatar
-            seed={voice.id}
-            name={voice.name}
-            className="size-14 border-[1.5px] border-white shadow-xs lg:size-18"
-          />
+        <div className="min-w-0 flex-1 space-y-1">
+          <div className="flex items-center gap-2">
+            <h4 className="truncate text-sm font-medium tracking-tight">
+              {voice.name}
+            </h4>
+            <Badge variant="secondary" className="shrink-0 font-normal">
+              {VOICE_CATEGORY_LABELS[voice.category]}
+            </Badge>
+          </div>
+          <p className="line-clamp-2 min-h-8 text-xs leading-relaxed text-muted-foreground">
+            {voice.description || "No description provided"}
+          </p>
         </div>
 
-      </div>
-
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5 lg:gap-3">
-        <div className="flex items-center gap-1.5 line-clamp-1 text-sm font-medium tracking-tight">
-          {voice.name}
-          <span className="size-1 shrink-0 rounded-full bg-muted-foreground/50" />
-          <span className="text-[#327c88]">
-            {VOICE_CATEGORY_LABELS[voice.category]}
-          </span>
-        </div>
-
-        <p className="line-clamp-1 text-xs text-muted-foreground">
-          {voice.description}
-        </p>
-
-        <p className="flex items-center gap-1 text-xs">
-          <span className="shrink-0">{flag}</span>
-          <span className="truncate font-medium">{region}</span>
-        </p>
-      </div>
-
-      <div className="ml-1 flex shrink-0 items-center gap-1 lg:ml-3 lg:gap-2">
-        <Button
-          variant="outline"
-          size="icon-sm"
-          className="rounded-full"
-          onClick={togglePlay}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <Spinner className="size-4" />
-          ) : isPlaying ? (
-            <Pause className="size-4" />
-          ) : (
-            <Play className="size-4" />
-          )}
-        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="outline" 
-              size="icon-sm" 
-              className="rounded-full"
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="-mr-1 -mt-1 shrink-0"
+              aria-label={`Actions for ${voice.name}`}
             >
               <MoreHorizontal className="size-4" />
             </Button>
@@ -152,42 +134,77 @@ export function VoiceCard({ voice }: VoiceCardProps) {
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-
-        {voice.variant === "CUSTOM" && (
-          <AlertDialog
-            open={showDeleteDialog}
-            onOpenChange={setShowDeleteDialog}
-          >
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete voice</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete &quot;{voice.name}&quot;? This
-                  action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel disabled={deleteMutation.isPending}>
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  variant="destructive"
-                  disabled={deleteMutation.isPending}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    deleteMutation.mutate(
-                      { id: voice.id },
-                      { onSuccess: () => setShowDeleteDialog(false) },
-                    );
-                  }}
-                >
-                  {deleteMutation.isPending ? "Deleting..." : "Delete"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
       </div>
+
+      <div className="flex items-center gap-3">
+        <Button
+          variant={isPlaying ? "default" : "outline"}
+          size="icon-sm"
+          className="shrink-0 rounded-full"
+          onClick={togglePlay}
+          disabled={isLoading}
+          aria-label={
+            isPlaying
+              ? `Pause ${voice.name} preview`
+              : `Play ${voice.name} preview`
+          }
+        >
+          {isLoading ? (
+            <Spinner className="size-4" />
+          ) : isPlaying ? (
+            <Pause className="size-4" />
+          ) : (
+            <Play className="size-4" />
+          )}
+        </Button>
+
+        <WaveformBars
+          seed={voice.id}
+          count={40}
+          active={isPlaying}
+          className="h-7 min-w-0 flex-1"
+        />
+
+        <span className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
+          <span>{flag}</span>
+          <span className="max-w-24 truncate">{region}</span>
+        </span>
+      </div>
+
+      {voice.variant === "CUSTOM" && (
+        <AlertDialog
+          open={showDeleteDialog}
+          onOpenChange={setShowDeleteDialog}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete voice</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete &quot;{voice.name}&quot;? This
+                action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={deleteMutation.isPending}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                disabled={deleteMutation.isPending}
+                onClick={(e) => {
+                  e.preventDefault();
+                  deleteMutation.mutate(
+                    { id: voice.id },
+                    { onSuccess: () => setShowDeleteDialog(false) },
+                  );
+                }}
+              >
+                {deleteMutation.isPending ? "Deleting..." : "Delete"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </div>
   );
 };

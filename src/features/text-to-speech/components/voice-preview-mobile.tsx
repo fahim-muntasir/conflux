@@ -50,8 +50,6 @@ export function VoicePreviewMobile({
     };
   }, [audioUrl]);
 
-  console.log("audio url", audioUrl)
-
   useEffect(() => {
     if (!isMobile) {
       audioRef.current?.pause();
@@ -89,25 +87,31 @@ export function VoicePreviewMobile({
   if (!audioUrl) return null;
 
   return (
-    <div className="border-t lg:hidden p-4">
+    <div className="border-t bg-card/30 p-4 lg:hidden">
       <audio ref={audioRef} src={audioUrl} />
-      <div className="grid grid-cols-[1fr_auto] items-center gap-4">
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium">{text}</p>
-          {selectedVoiceName && (
-            <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-              <VoiceAvatar
-                seed={selectedVoiceSeed ?? selectedVoiceName}
-                name={selectedVoiceName}
-                className="shrink-0"
-              />
-              <span className="truncate">{selectedVoiceName}</span>
-            </div>
-          )}
+      <div className="flex items-center gap-3">
+        {selectedVoiceName && (
+          <VoiceAvatar
+            seed={selectedVoiceSeed ?? selectedVoiceName}
+            name={selectedVoiceName}
+            className="size-10 shrink-0"
+          />
+        )}
+
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium">
+            {selectedVoiceName ?? "Voice preview"}
+          </p>
+          <p className="truncate text-xs text-muted-foreground">{text}</p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={handleDownload}>
+        <div className="flex shrink-0 items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleDownload}
+            aria-label="Download audio"
+          >
             <Download className="size-4" />
           </Button>
           <Button
@@ -115,11 +119,12 @@ export function VoicePreviewMobile({
             size="icon"
             className="rounded-full"
             onClick={togglePlayPause}
+            aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (
-              <Pause className="fill-background" />
+              <Pause className="fill-current" />
             ) : (
-              <Play className="fill-background" />
+              <Play className="fill-current" />
             )}
           </Button>
         </div>

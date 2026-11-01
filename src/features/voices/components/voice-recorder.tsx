@@ -58,7 +58,7 @@ export function VoiceRecorder({
 
   if (error) {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-2xl border border-destructive/50 bg-destructive/5 px-6 py-10">
+      <div className="flex flex-col items-center gap-4 rounded-lg border border-destructive/50 bg-destructive/5 px-6 py-10">
         <p className="text-center text-sm text-destructive">{error}</p>
         <Button
           type="button"
@@ -74,7 +74,7 @@ export function VoiceRecorder({
 
   if (file) {
     return (
-      <div className="flex items-center gap-3 rounded-xl border p-4">
+      <div className="flex items-center gap-3 rounded-lg border bg-card p-4">
 
         <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
           <FileAudio className="size-5 text-muted-foreground" />
@@ -96,6 +96,7 @@ export function VoiceRecorder({
           size="icon-sm"
           onClick={togglePlay}
           title={isPlaying ? "Pause" : "Play"}
+          aria-label={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? (
             <Pause className="size-4" />
@@ -109,6 +110,7 @@ export function VoiceRecorder({
           size="icon-sm"
           onClick={handleReRecord}
           title="Re-record"
+          aria-label="Re-record"
         >
           <RotateCcw className="size-4" />
         </Button>
@@ -118,6 +120,7 @@ export function VoiceRecorder({
           size="icon-sm"
           onClick={handleReRecord}
           title="Remove"
+          aria-label="Remove recording"
         >
           <X className="size-4" />
         </Button>
@@ -127,10 +130,10 @@ export function VoiceRecorder({
 
   if (isRecording) {
     return (
-      <div className="flex flex-col overflow-hidden rounded-2xl border">
+      <div className="flex flex-col overflow-hidden rounded-lg border bg-card">
          <div ref={containerRef} className="w-full" />
          <div className="flex items-center justify-between border-t p-4">
-            <p className="text-[28px] font-semibold leading-[1.2] tracking-tight">
+            <p className="font-mono text-[28px] font-semibold leading-[1.2] tracking-tight tabular-nums">
               {formatTime(elapsedTime)}
             </p>
             <Button 
@@ -149,11 +152,11 @@ export function VoiceRecorder({
   return (
     <div
       className={cn(
-        "flex cursor-pointer flex-col items-center justify-center gap-4 overflow-hidden rounded-2xl border px-6 py-10",
+        "flex cursor-pointer flex-col items-center justify-center gap-4 overflow-hidden rounded-lg border border-dashed px-6 py-10",
         isInvalid && "border-destructive",
       )}
     >
-      <div className="flex size-12 items-center justify-center rounded-xl bg-muted">
+      <div className="flex size-12 items-center justify-center rounded-lg bg-muted">
         <Mic className="size-5 text-muted-foreground" />
       </div>
 

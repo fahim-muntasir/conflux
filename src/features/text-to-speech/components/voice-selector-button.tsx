@@ -16,8 +16,8 @@ export function VoiceSelectorButton() {
 
   const form = useTypedAppFormContext(ttsFormOptions);
   const voiceId = useStore(form.store, (s) => s.values.voiceId)
-  
-  const currentVoice = 
+
+  const currentVoice =
     allVoices.find((v) => v.id === voiceId) ?? allVoices[0];
 
   const buttonLabel = currentVoice?.name ?? "Select voice";
@@ -28,12 +28,13 @@ export function VoiceSelectorButton() {
         variant="outline"
         size="sm"
         className="flex-1 justify-start gap-2 px-2"
+        aria-label={`Voice and settings: ${buttonLabel}`}
       >
         {currentVoice && (
           <VoiceAvatar
             seed={currentVoice.id}
             name={currentVoice.name}
-            className="size-6"
+            className="size-5"
           />
         )}
         <span className="flex-1 truncate text-left text-sm font-medium">

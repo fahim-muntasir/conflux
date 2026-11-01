@@ -7,10 +7,10 @@ export default function Loading() {
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="min-h-0 flex-1 p-4 lg:p-6">
-            <Skeleton className="h-full w-full rounded-xl" />
+            <Skeleton className="h-full w-full rounded-lg" />
           </div>
 
-          <div className="shrink-0 p-4 lg:p-6">
+          <div className="shrink-0 border-t p-4 lg:px-6 lg:py-4">
             <div className="flex flex-col gap-3 lg:hidden">
               <div className="flex items-center gap-2">
                 <Skeleton className="h-9 flex-1" />
@@ -32,7 +32,7 @@ export default function Loading() {
         <VoicePreviewPlaceholder />
       </div>
 
-      <div className="hidden w-105 min-h-0 flex-col border-l lg:flex">
+      <div className="hidden w-105 min-h-0 flex-col border-l bg-card/30 lg:flex">
         <div className="grid h-12 grid-cols-2 border-b">
           <div className="flex items-center justify-center border-r px-4">
             <Skeleton className="h-4 w-20" />

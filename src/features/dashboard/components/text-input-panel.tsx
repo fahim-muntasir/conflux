@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Coins } from "lucide-react";
+import { HandCoins } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,58 +24,49 @@ export function TextInputPanel() {
   };
 
   return (
-    <div className="
-      rounded-[22px] bg-linear-185 from-[#ff8ee3] from-15% via-[#57d7e0] via-39% to-[#dbf1f2] to-85% p-0.5 shadow-[0_0_0_4px_white]
-    ">
-      {/* Using px values for border-radius to ensure proper gradient border math (outer - padding = inner). */}
-      {/* Standard classes like rounded-4xl use CSS calc() which doesn't align cleanly at corners. */}
-      <div className="rounded-[20px] bg-[#F9F9F9] p-1">
-        <div className="space-y-4 rounded-2xl bg-white p-4 drop-shadow-xs">
-          <Textarea
-            placeholder="Start typing or paste your text here..."
-            className="min-h-35 resize-none border-0 bg-transparent p-0 shadow-none focus-visible:ring-0"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            maxLength={TEXT_MAX_LENGTH}
-          />
+    <div className="rounded-lg border bg-card transition-colors focus-within:border-primary/40">
+      <div className="p-4">
+        <Textarea
+          aria-label="Text to convert to speech"
+          placeholder="Start typing or paste your text here..."
+          className="min-h-35 resize-none border-0 bg-transparent p-0 leading-relaxed shadow-none focus-visible:ring-0 dark:bg-transparent"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          maxLength={TEXT_MAX_LENGTH}
+        />
+      </div>
 
-          {/* Bottom info */}
-
-          <div className="flex items-center justify-between">
-            <Badge variant="outline" className="gap-1.5 border-dashed">
-              <Coins className="size-3 text-chart-5" />
-              <span className="text-xs">
-                {text.length === 0 ? (
-                  "Start typing to estimate"
-                ) : (
-                  <>
-                    <span className="tabular-nums">
-                      ${(text.length * COST_PER_UNIT).toFixed(4)}
-                    </span>{" "}
-                    estimated
-                  </>
-                )}
-              </span>
-            </Badge>
-            <span className="text-xs text-muted-foreground">
-              {text.length.toLocaleString()} / {TEXT_MAX_LENGTH.toLocaleString()} characters
+      <div className="flex flex-col gap-3 border-t p-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <Badge variant="outline" className="gap-1.5 border-dashed">
+            <HandCoins className="size-3 text-chart-5" />
+            <span className="text-xs">
+              {text.length === 0 ? (
+                "Start typing to estimate"
+              ) : (
+                <>
+                  <span className="tabular-nums">
+                    ${(text.length * COST_PER_UNIT).toFixed(4)}
+                  </span>{" "}
+                  estimated
+                </>
+              )}
             </span>
-          </div>
+          </Badge>
+          <span className="text-xs tabular-nums text-muted-foreground">
+            {text.length.toLocaleString()} / {TEXT_MAX_LENGTH.toLocaleString()}
+          </span>
         </div>
 
-        {/* Action bar */}
-
-        <div className="flex items-center justify-end p-3">
-          <Button
-            size="sm"
-            disabled={!text.trim()}
-            onClick={handleGenerate}
-            className="w-full lg:w-auto"
-          >
-            Generate speech
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          disabled={!text.trim()}
+          onClick={handleGenerate}
+          className="w-full sm:w-auto"
+        >
+          Generate speech
+        </Button>
       </div>
     </div>
-  )
+  );
 }

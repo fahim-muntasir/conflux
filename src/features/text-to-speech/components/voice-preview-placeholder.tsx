@@ -1,35 +1,44 @@
 import Link from "next/link";
-import { AudioLines, BookOpen, Sparkles, Volume2 } from "lucide-react";
+import { BookOpen, Play } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { WaveformBars } from "@/components/waveform-bars";
 
 export function VoicePreviewPlaceholder() {
   return (
-    <div className="hidden flex-1 lg:flex h-full flex-col items-center justify-center gap-6 border-t">
-      <div className="flex flex-col items-center gap-3">
-        <div className="relative flex w-32 items-center justify-center">
-          
-          <div className="absolute left-0 -rotate-30 rounded-full bg-muted p-4">
-            <Volume2 className="size-5 text-muted-foreground" />
+    <div className="hidden h-full flex-1 flex-col items-center justify-center gap-6 border-t bg-card/30 p-6 lg:flex">
+      <div className="w-full max-w-md space-y-6">
+        {/* Ghost player */}
+        <div
+          aria-hidden
+          className="rounded-lg border border-dashed bg-background/60 p-4"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full border bg-muted">
+              <Play className="size-4 text-muted-foreground" />
+            </span>
+            <WaveformBars
+              seed="conflux-preview-placeholder"
+              count={48}
+              className="h-10 min-w-0 flex-1 opacity-60"
+            />
+            <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
+              00:00
+            </span>
           </div>
-
-          <div className="relative z-10 rounded-full bg-foreground p-4">
-            <Sparkles className="size-5 text-background" />
-          </div>
-
-          <div className="absolute right-0 -rotate-30 rounded-full bg-muted p-4">
-            <AudioLines className="size-5 text-muted-foreground" />
-          </div>
-
         </div>
 
-        <p className="text-lg font-semibold tracking-tight text-foreground">
-          Preview will appear here
-        </p>
-        <p className="max-w-64 text-center text-sm text-muted-foreground">
-          Once you generate, your audio result will appear here. Sit back and relax.
-        </p>
+        <div className="space-y-1.5 text-center">
+          <p className="text-base font-semibold tracking-tight text-foreground">
+            Your audio will appear here
+          </p>
+          <p className="mx-auto max-w-xs text-sm text-muted-foreground">
+            Write your script, pick a voice, and generate. The waveform and
+            player show up here.
+          </p>
+        </div>
       </div>
+
       <Button variant="outline" size="sm" asChild>
         <Link href="mailto:fahimmuntasir0909@gmail.com">
           <BookOpen />

@@ -11,11 +11,11 @@ import { SettingsPanelHistory } from "./settings-panel-history";
 import { SettingsPanelSettings } from "./settings-panel-settings";
 
 const tabTriggerClassName = 
-  "flex-1 h-full gap-2 bg-transparent rounded-none border-x-0 border-t-0 border-b-px border-b-transparent shadow-none data-[state=active]:border-b-foreground group-data-[variant=default]/tabs-list:data-[state=active]:shadow-none";
+  "flex-1 h-full gap-2 bg-transparent rounded-none border-x-0 border-t-0 border-b-2 border-b-transparent shadow-none text-muted-foreground data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-input group-data-[variant=default]/tabs-list:data-[state=active]:shadow-none";
 
 export function SettingsPanel() {
    return (
-    <div className="hidden w-105 min-h-0 flex-col border-l lg:flex">
+    <div className="hidden w-105 min-h-0 flex-col border-l bg-card/30 lg:flex">
       <Tabs
         defaultValue="settings"
         className="flex h-full min-h-0 flex-col gap-y-0"

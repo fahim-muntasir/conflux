@@ -1,7 +1,9 @@
 import { cookies } from "next/headers";
 
-import { 
-  SidebarInset, 
+import { AppFooter } from "@/components/app-footer";
+import { AppNavbar } from "@/components/app-navbar";
+import {
+  SidebarInset,
   SidebarProvider
 } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/features/dashboard/components/dashboard-sidebar";
@@ -17,11 +19,13 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen} className="h-svh">
       <DashboardSidebar />
-      <SidebarInset className="min-h-0 min-w-0">
-        <main className="flex min-h-0 flex-1 flex-col">
+      <SidebarInset className="min-h-0 min-w-0 overflow-hidden">
+        <AppNavbar />
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
           {children}
-        </main>
+        </div>
+        <AppFooter />
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 };
