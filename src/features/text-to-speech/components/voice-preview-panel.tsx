@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Pause, Play, Download, Redo, Undo } from "lucide-react";
-import { format } from "date-fns";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,10 @@ type VoicePreviewPanelVoice = {
 };
 
 function formatTime(seconds: number): string {
-  return format(new Date(seconds * 1000), "mm:ss");
+  const safe = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
+  const m = Math.floor(safe / 60);
+  const s = Math.floor(safe % 60);
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 };
 
 export function VoicePreviewPanel({
@@ -70,14 +72,46 @@ export function VoicePreviewPanel({
   };
 
   return (
-    <div className="h-full gap-8 flex-col border-t hidden flex-1 lg:flex">
+    <section
+      aria-label="Voice preview"
+      className="@container hidden shrink-0 flex-col border-t bg-card/30 lg:flex"
+    >
       {/* Header */}
-      <div className="p-6 pb-0">
-        <h3 className="font-semibold text-foreground">Voice preview</h3>
+      <div className="flex min-w-0 items-center justify-between gap-3 border-b px-4 py-3 @lg:px-6">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          {selectedVoiceName && (
+            <VoiceAvatar
+              seed={selectedVoiceSeed ?? selectedVoiceName}
+              name={selectedVoiceName}
+              className="size-9 shrink-0"
+            />
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-foreground">
+              {selectedVoiceName ?? "Voice preview"}
+            </p>
+            <p className="truncate text-xs text-muted-foreground">{text}</p>
+          </div>
+        </div>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleDownload}
+          disabled={isDownloading}
+          className="shrink-0"
+        >
+          {isDownloading ? (
+            <Spinner className="size-4" />
+          ) : (
+            <Download className="size-4" />
+          )}
+          <span className="hidden @sm:inline">Download</span>
+        </Button>
       </div>
 
-      {/* Content */}
-      <div className="relative flex flex-1 items-center justify-center">
+      {/* Waveform stage: fixed height so the waveform always has room */}
+      <div className="relative h-24 shrink-0 px-4 py-3 @lg:px-6">
         {!isReady && (
           <div className="absolute inset-0 z-10 flex items-center justify-center">
             <Badge
@@ -92,94 +126,63 @@ export function VoicePreviewPanel({
         <div
           ref={containerRef}
           className={cn(
-            "w-full cursor-pointer transition-opacity duration-200",
+            "h-full w-full cursor-pointer overflow-hidden transition-opacity duration-200",
             !isReady && "opacity-0",
           )}
         />
       </div>
-       {/* Time display */}
-       <div className="flex items-center justify-center">
-        <p className="text-3xl font-semibold tabular-nums tracking-tight text-foreground">
-          {formatTime(currentTime)}&nbsp;
+
+      {/* Transport: stacked when narrow, 3 columns when there is room */}
+      <div className="flex flex-col items-center gap-2 border-t px-4 py-3 @lg:grid @lg:grid-cols-[1fr_auto_1fr] @lg:gap-3 @lg:px-6">
+        <p className="font-mono text-xs tabular-nums text-foreground @lg:justify-self-start @lg:text-sm">
+          {formatTime(currentTime)}
           <span className="text-muted-foreground">
-            /&nbsp;{formatTime(duration)}
+            &nbsp;/&nbsp;{formatTime(duration)}
           </span>
         </p>
-       </div>
 
-      {/* Footer */}
-      <div className="flex flex-col items-center p-6">
-        <div className="grid w-full grid-cols-3">
-          {/* Metadata */}
-          <div className="flex min-w-0 flex-col gap-0.5">
-            <p className="truncate text-sm font-medium text-foreground">
-              {text}
-            </p>
-            {selectedVoiceName && (
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <VoiceAvatar
-                  seed={selectedVoiceSeed ?? selectedVoiceName}
-                  name={selectedVoiceName}
-                  className="shrink-0"
-                />
-                <span className="truncate">{selectedVoiceName}</span>
-              </div>
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon-lg"
+            className="flex-col gap-0"
+            onClick={() => seekBackward(10)}
+            disabled={!isReady}
+            aria-label="Back 10 seconds"
+          >
+            <Undo className="size-4" />
+            <span className="text-[10px] font-medium">10</span>
+          </Button>
+
+          <Button
+            variant="default"
+            size="icon-lg"
+            className="rounded-full"
+            onClick={togglePlayPause}
+            aria-label={isPlaying ? "Pause" : "Play"}
+          >
+            {isPlaying ? (
+              <Pause className="fill-current" />
+            ) : (
+              <Play className="fill-current" />
             )}
-          </div>
+          </Button>
 
-          {/* Player controls */}
-          <div className="flex items-center justify-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon-lg"
-              className="flex-col"
-              onClick={() => seekBackward(10)}
-              disabled={!isReady}
-            >
-              <Undo className="size-4 -mb-1" />
-              <span className="text-[10px] font-medium">10</span>
-            </Button>
-
-            <Button
-              variant="default"
-              size="icon-lg"
-              className="rounded-full"
-              onClick={togglePlayPause}
-            >
-              {isPlaying ? (
-                <Pause className="fill-background" />
-              ) : (
-                <Play className="fill-background" />
-              )}
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="icon-lg"
-              className="flex-col"
-              onClick={() => seekForward(10)}
-              disabled={!isReady}
-            >
-              <Redo className="size-4 -mb-1" />
-              <span className="text-[10px] font-medium">10</span>
-            </Button>
-          </div>
-
-          {/* Download */}
-          <div className="flex justify-end">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDownload}
-              disabled={isDownloading}
-            >
-              <Download className="size-4" />
-              Download
-            </Button>
-          </div>
-
+          <Button
+            variant="ghost"
+            size="icon-lg"
+            className="flex-col gap-0"
+            onClick={() => seekForward(10)}
+            disabled={!isReady}
+            aria-label="Forward 10 seconds"
+          >
+            <Redo className="size-4" />
+            <span className="text-[10px] font-medium">10</span>
+          </Button>
         </div>
+
+        <div className="hidden @lg:block" />
       </div>
-    </div>
+    </section>
   );
 };

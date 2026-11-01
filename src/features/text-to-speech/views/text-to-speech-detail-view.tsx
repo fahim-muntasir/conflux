@@ -1,7 +1,11 @@
 "use client";
 
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { useSuspenseQueries } from "@tanstack/react-query";
 
+import { Button } from "@/components/ui/button";
+import { VoiceAvatar } from "@/components/voice-avatar/voice-avatar";
 import { useTRPC } from "@/trpc/client";
 import { TextInputPanel } from "@/features/text-to-speech/components/text-input-panel";
 import { SettingsPanel } from "@/features/text-to-speech/components/settings-panel";
@@ -51,9 +55,6 @@ export function TextToSpeechDetailView({
     repetitionPenalty: data.repetitionPenalty,
   };
 
-  // Use the denormalized voiceName snapshot instead of a populated voice relation
-  // so the preview always shows the voice name at the time of generation,
-  // even if the voice was later renamed or deleted.
   const generationVoice = {
     id: data.voiceId ?? undefined,
     name: data.voiceName,
@@ -63,8 +64,35 @@ export function TextToSpeechDetailView({
     <TTSVoicesProvider value={{ customVoices, systemVoices, allVoices }}>
       <TextToSpeechForm key={generationId} defaultValues={defaultValues}>
         <div className="flex min-h-0 flex-1 overflow-hidden">
-          <div className="flex min-h-0 flex-1 flex-col">
-            <TextInputPanel />
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+            {/* Context bar */}
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b px-4 py-2 lg:px-6">
+              <div className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
+                <VoiceAvatar
+                  seed={generationVoice.id ?? generationVoice.name}
+                  name={generationVoice.name}
+                  className="size-5 shrink-0"
+                />
+                <span className="truncate">
+                  Generated with{" "}
+                  <span className="font-medium text-foreground">
+                    {generationVoice.name}
+                  </span>
+                </span>
+              </div>
+              <Button variant="outline" size="xs" asChild className="shrink-0">
+                <Link href="/text-to-speech">
+                  <Plus />
+                  New generation
+                </Link>
+              </Button>
+            </div>
+
+            {/* Editor keeps a minimum height; the preview never steals it */}
+            <div className="flex min-h-64 flex-1 flex-col">
+              <TextInputPanel />
+            </div>
+
             <VoicePreviewMobile
               audioUrl={data.audioUrl}
               voice={generationVoice}

@@ -3,46 +3,43 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { QuickAction } from "@/features/dashboard/data/quick-actions";
-import { cn } from "@/lib/utils";
 
 type QuickActionCardProps = QuickAction;
 
 export function QuickActionCard({
   title,
   description,
-  gradient,
   href,
 }: QuickActionCardProps) {
+  // Decorative waveform derived from the title (purely visual)
+  const bars = Array.from({ length: 18 }, (_, i) => {
+    const code = title.charCodeAt(i % title.length);
+    return 20 + ((code * (i + 3)) % 70);
+  });
+
   return (
-    <div className="flex gap-4 rounded-xl border bg-card p-3">
-      {/* Visual placeholder with gradient */}
+    <div className="group flex gap-4 rounded-lg border bg-card p-3 transition-colors hover:border-primary/40 hover:bg-accent/40">
       <div
-        className={cn(
-          "relative h-31 w-41 shrink-0 overflow-hidden rounded-xl bg-linear-to-br",
-          gradient,
-        )}
+        aria-hidden
+        className="flex h-28 w-36 shrink-0 items-center justify-center gap-0.5 rounded-md bg-muted px-3"
       >
-        {/* Decorative elements */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="size-12 rounded-full bg-white/30" />
-        </div>
-        <div className="absolute inset-2 rounded-lg ring-2 ring-inset ring-white/20" />
+        {bars.map((h, i) => (
+          <span
+            key={i}
+            className="w-0.5 rounded-full bg-muted-foreground/40 transition-colors group-hover:bg-primary"
+            style={{ height: `${h}%` }}
+          />
+        ))}
       </div>
 
-      {/* Content */}
-      <div className="flex flex-col justify-between py-1">
+      <div className="flex min-w-0 flex-col justify-between py-1">
         <div className="space-y-1">
           <h3 className="text-sm font-medium">{title}</h3>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs leading-relaxed text-muted-foreground">
             {description}
           </p>
         </div>
-        <Button 
-          variant="outline" 
-          size="xs" 
-          className="w-fit" 
-          asChild
-        >
+        <Button variant="outline" size="xs" className="w-fit" asChild>
           <Link href={href}>
             Try now
             <ArrowRight className="size-3" />
@@ -50,5 +47,5 @@ export function QuickActionCard({
         </Button>
       </div>
     </div>
-  )
-};
+  );
+}

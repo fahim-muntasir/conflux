@@ -23,10 +23,13 @@ export function VoiceAvatar({
 
   return (
     <Avatar
-      className={cn("size-4 border-white shadow-xs", className)}
+      className={cn(
+        "size-4 bg-muted ring-1 ring-white/10",
+        className,
+      )}
     >
       <AvatarImage src={avatarUrl} alt={name} />
-      <AvatarFallback className="text-[8px]">
+      <AvatarFallback className="bg-primary/15 text-[8px] font-medium text-primary">
         {name.slice(0, 2).toUpperCase()}
       </AvatarFallback>
     </Avatar>

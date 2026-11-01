@@ -108,7 +108,7 @@ function FileDropzone({
 
   if (file) {
     return (
-      <div className="flex items-center gap-3 rounded-xl border p-4">
+      <div className="flex items-center gap-3 rounded-lg border bg-card p-4">
 
         <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
           <FileAudio className="size-5 text-muted-foreground" />
@@ -126,6 +126,7 @@ function FileDropzone({
           variant="ghost"
           size="icon-sm"
           onClick={togglePlay}
+          aria-label={isPlaying ? "Pause preview" : "Play preview"}
         >
           {isPlaying ? (
             <Pause className="size-4" />
@@ -138,6 +139,7 @@ function FileDropzone({
           variant="ghost"
           size="icon-sm"
           onClick={() => onFileChange(null)}
+          aria-label="Remove file"
         >
           <X className="size-4" />
         </Button>
@@ -149,16 +151,16 @@ function FileDropzone({
     <div
       {...getRootProps()}
       className={cn(
-        "flex cursor-pointer flex-col items-center justify-center gap-4 overflow-hidden rounded-2xl border px-6 py-10 transition-colors",
+        "flex cursor-pointer flex-col items-center justify-center gap-4 overflow-hidden rounded-lg border border-dashed px-6 py-10 transition-colors hover:border-primary/50 hover:bg-muted/30",
         isDragReject || isInvalid
           ? "border-destructive"
           : isDragActive
-            ? "border-primary"
+            ? "border-primary bg-primary/5"
             : "",
       )}
     >
       <input {...getInputProps()} />
-      <div className="flex size-12 items-center justify-center rounded-xl bg-muted">
+      <div className="flex size-12 items-center justify-center rounded-lg bg-muted">
         <AudioLines className="size-5 text-muted-foreground" />
       </div>
 

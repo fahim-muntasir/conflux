@@ -1,5 +1,7 @@
 "use client";
 
+import { AudioLines } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -28,8 +30,11 @@ export function GenerateButton({
           <Spinner className="size-3" />
           Generating...
         </>
-      ): (
-        "Generate speech"
+      ) : (
+        <>
+          <AudioLines className="size-3.5" />
+          Generate speech
+        </>
       )}
     </Button>
   );
