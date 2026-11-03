@@ -59,37 +59,7 @@ The frontend and model-serving API operate independently, keeping application lo
 
 Conflux uses a separated application and inference architecture. The Next.js application handles authentication, business logic, voice management, and generation records, while a separately hosted Chatterbox service handles speech inference.
 
-```text
-                         User
-                           |
-                           v
-                  Next.js Application
-                           |
-             +-------------+-------------+
-             |             |             |
-             v             v             v
-         Clerk Auth     tRPC API     Dashboard UI
-                           |
-                  +--------+--------+
-                  |                 |
-                  v                 v
-              PostgreSQL       Chatterbox API
-               (Prisma)        (Self-Hosted)
-                  |                 |
-                  |                 v
-                  |           Chatterbox TTS
-                  |                 |
-                  |                 v
-                  |           Generated Audio
-                  |                 |
-                  +--------+--------+
-                           |
-                           v
-                    Object Storage
-                           |
-                           v
-                 Audio Playback / Download
-```
+![Architecture diagram](./docs/images/architecture-diagram.png)
 
 ## Technology Stack
 
